@@ -21,6 +21,9 @@ const postCtrl = {
 
     const { title, description, categoryName } = req.body;
 
+
+    console.log(title, description, categoryName);
+
     if (!title || !description || req.files.length === 0 || !categoryName) {
       return res
         .status(400)
@@ -29,6 +32,8 @@ const postCtrl = {
 
     // Find the category by name
     const category = await Category.findOne({ categoryName });
+
+    // console.log(category);
     
     if (!category) {
       return res
