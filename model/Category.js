@@ -10,13 +10,13 @@ const CategorySchema = new mongoose.Schema(
       unique: true,
     },
 
-   posts:[
-    {
-        type:mongoose.Schema.Types.ObjectId,
-        ref: "Post"
+    slug:{
+      type: String,
+      required: true,
+      unique: true,
     }
 
-   ]
+
   },
 
   {

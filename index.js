@@ -1,3 +1,5 @@
+console.log("IU am fiorst line");
+
 const express = require("express");
 
 const cors = require("cors");
@@ -12,10 +14,15 @@ const mongoose = require("mongoose");
 
 // const errorHandler = require("./middleware/errHandler");
 
-const postRoute = require("./Routes/post");
 const errorHandler = require("./middleware/errHandler");
-const categoryRoute = require("./Routes/category");
-const authRoute = require("./Routes/userRoute");
+
+const categoryRoute = require("./Routes/categoryRoute.js");
+
+const productRoute = require("./Routes/productRoute.js");
+const orderRoute = require("./Routes/orderRoute.js");
+const brandRoute = require("./Routes/brandRoute.js");
+const addressRoute = require("./Routes/addressRoute.js");
+
 
 const PORT = process.env.PORT || 3000;
 
@@ -23,12 +30,12 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 
+console.log("Hello i am just above mongodb connedction function");
+
 //!Connect to mongodb
 
 mongoose
-  .connect(
-    process.env.Mongodb_URI
-  )
+  .connect(process.env.Mongodb_URI)
 
   .then(() => console.log("DB connected succesfully"))
   .catch((error) => console.log(error));
@@ -39,15 +46,26 @@ app.use(express.json()); //passing incoming json data from the client
 
 //!Routes
 
+app.use("/api/category", categoryRoute);
 
-app.use("/api/category", categoryRoute)
 
 app.use("/api/users", userRoute);
 
+// app.use("/api/order". orderRoute);
+
+app.use("/api/products", productRoute);
+
+app.use("/api/order", orderRoute);
 
 
-app.use("/api/posts", postRoute);
+app.use("/api/brand", brandRoute);
 
+
+
+// app.use("/api/customer", customerRoute);
+
+
+app.use("/api/address", addressRoute);
 
 //!Error handler
 

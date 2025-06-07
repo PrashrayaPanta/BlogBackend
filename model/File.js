@@ -1,11 +1,22 @@
 //Image schema
 const mongoose = require("mongoose");
 
-const fileSchema = new mongoose.Schema({
-    url: String,
-    public_id: String,
-  });
-  
-  const File = mongoose.model("File", fileSchema);
+const fileSchema = new mongoose.Schema(
+  {
+    url: {
+      type: String,
+      required: true,
+    },
+    public_id: {
+      type: String,
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-  module.exports = File;
+const File = mongoose.model("File", fileSchema);
+
+module.exports = File;

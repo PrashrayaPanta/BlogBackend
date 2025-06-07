@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 
 const asyncHandler = require("express-async-handler");
 
-const User = require("../model/User");
+const User = require("../model/User.js");
 
 const File = require("../model/File");
 
@@ -15,6 +15,9 @@ const userCtrl = {
 
 
       const { username, email, password } = req.body;
+
+
+      
 
       //! Validations
       if (!username || !email || !password ) {
@@ -70,6 +73,7 @@ const userCtrl = {
          password: hashedPassword,
          email,
          profileImageUrl: profileimage.url,
+
        });
  
        console.log(userCreated);
@@ -124,23 +128,14 @@ const userCtrl = {
   //! Profile
 
   Profile: asyncHandler(async (req, res) => {
-    // console.log(user1);
-
-    //find the user
-    const user = await User.findById(req.user).select("-password").populate({
-      path: "posts",
-      select: "title description images createdAt",
-    });
+    // Find the user and populate the address field
+    const user = await User.findById(req.user_id).select("-password").populate("address");
 
     if (!user) {
-      return res.status(404).json({ message: "User Not Found" });
+      throw new Error("User not found");
     }
 
-    return res.status(200).json({ user, message: "Fetched Only my post" });
-
-   
-
-
+    return res.json({ user, message: "Fetched user profile successfully" });
   }),
 
   EditProfile: asyncHandler(async (req, res) => {

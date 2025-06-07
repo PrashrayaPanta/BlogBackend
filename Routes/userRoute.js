@@ -4,6 +4,9 @@ const isAuthenticated = require("../middleware/isAuth");
 const cloudinary = require("cloudinary").v2;
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const multer = require("multer");
+const isAdmin = require("../middleware/isAdmin");
+
+// console.log("I am inside the userroute")
 
 // Configure Cloudinary
 cloudinary.config({
@@ -16,7 +19,7 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary,
   params: {
-    folder: "nodejsProfileImage",
+    folder: "userProfileImage",
     allowedFormat: ["png", "jpeg"],
   },
 });
@@ -36,12 +39,51 @@ const upload = multer({
 
 const userRoute = express.Router();
 
-// Routes
-userRoute.post("/register", upload.array("image"), userCtrl.register); // Register with image upload
+userRoute.post("/register", upload.array("images"), userCtrl.register);
 userRoute.post("/login", userCtrl.login); // Login
-userRoute.get("/profile", isAuthenticated, userCtrl.Profile); // Get profile
-userRoute.put("/profile/edit", isAuthenticated, userCtrl.EditProfile); // Edit profile
-userRoute.put("/profile/password", isAuthenticated, userCtrl.EditPassword); // Update password
-userRoute.delete("/profile/:id", isAuthenticated, userCtrl.DeleteAccount); // Delete account
+
+//! Admin  Route
+
+
+
+userRoute.get("/profile", isAuthenticated, isAdmin,  userCtrl.Profile);
+userRoute.put(
+  "/profile/edit",
+  isAuthenticated,
+  isAdmin,
+  userCtrl.EditProfile
+); // Edit profile
+
+userRoute.put(
+  "/profile/password",
+  isAuthenticated,
+  isAdmin,
+  userCtrl.EditPassword
+); // Update password
+userRoute.delete(
+  "/profile/:id",
+  isAuthenticated,
+  isAdmin,
+  userCtrl.DeleteAccount
+); // Delete account
+
+//! Customer Route
+
+userRoute.get("/customer/profile", isAuthenticated, userCtrl.Profile); // Get profile
+userRoute.put("/customer/profile/edit", isAuthenticated, userCtrl.EditProfile); // Edit profile
+userRoute.put(
+  "/customer/profile/password",
+  isAuthenticated,
+  userCtrl.EditPassword
+); // Update password
+userRoute.delete(
+  "/customer/profile/:id",
+  isAuthenticated,
+  userCtrl.DeleteAccount
+);
+
+
+
+// Delete account
 
 module.exports = userRoute;

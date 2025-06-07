@@ -1,7 +1,8 @@
 const jwt = require("jsonwebtoken");
 
 const isAuthenticated = async (req, res, next) => {
-  // console.log("Hello I am under authenticated function")
+
+    console.log(req.headers);
 
   // get the token from header
 
@@ -17,7 +18,7 @@ const isAuthenticated = async (req, res, next) => {
     //if the token is temnpered
     if (err) {
       return false;
-      // if token is right
+      // if token is not tempered
     } else {
       return decoded;
     }
@@ -32,11 +33,12 @@ const isAuthenticated = async (req, res, next) => {
   // console.log(user_id);
 
   if (verifyToken) {
-    console.log(verifyToken)
-    req.user = verifyToken.id;
-    console.log(req.user)
+    console.log(verifyToken);
+    req.user_id = verifyToken.id;
+
     next();
   } else {
+    console.log("Hello I am error");
     const err = new Error("Token Expired plz login in");
     next(err);
   }

@@ -3,27 +3,28 @@ const asyncHandler = require("express-async-handler");
 const mongoose = require("mongoose");
 const Category = require("../model/Category.js");
 
-const Post = require("../model/Post");
+const Post = require("../model/Product.js");
 
 const categoryCtrl = {
   createCategory: asyncHandler(async (req, res) => {
-    const { categoryName } = req.body;
+    const { categoryName} = req.body;
 
     console.log(categoryName);
 
+
+    const slug = categoryName.split(" ").join("-")
+
     //! Track the uniqueness of categoryName field
 
-    const category = await Category.findOne({categoryName});
+    const category = await Category.findOne({ categoryName });
 
-    if(categoryName === category?.categoryName){
-        return res.status(400).json({message:"Category should be unique"})
+    if (categoryName === category?.categoryName) {
+      return res.status(400).json({ message: "Category should be unique" });
     }
 
-    const categoryCreated = await Category.create({ categoryName });
+    const categoryCreated = await Category.create({ categoryName, slug });
 
     res.status(201).json({ message: "Created successfully", categoryCreated });
-
-  
   }),
 
   deleteCategory: asyncHandler(async (req, res) => {
@@ -39,10 +40,7 @@ const categoryCtrl = {
   }),
 
   getAllCategory: asyncHandler(async (req, res) => {
-    const Categories = await Category.find().populate({
-      path: "posts",
-      select: "title description author",
-    });
+    const Categories = await Category.find();
 
     res.json({ message: "Get all category", Categories }).status(203);
   }),
@@ -57,9 +55,7 @@ const categoryCtrl = {
       return res.status(400).json({ message: "Invalid category ID" });
     }
 
-    const category = await Category.findById(id).populate({
-      path: "posts",
-    });
+    const category = await Category.findById(id);
 
     if (!category) {
       return res.status(404).json({ message: "Category not found" });
@@ -98,6 +94,29 @@ const categoryCtrl = {
       message: "Updated successfully",
       categoryDocumentAfterUpdation: afterUpdation,
     });
+  }),
+
+  getCertainCategoryProducts: asyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    // Validate the `id`
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid category ID" });
+    }
+
+    const category = await Category.findById(id).populate({
+      path: "posts",
+    });
+
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    console.log(category);
+
+    res
+      .status(201)
+      .json({ message: "Certain Category Fetched Successfully", category });
   }),
 };
 
